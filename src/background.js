@@ -13,7 +13,6 @@ const electron = require("electron");
 const path = require("path");
 const fs = require("fs");
 const dialog = electron.dialog
-// console.log(dialog)
 // let win = BrowserWindow.getAllWindows()[0];
 let windowFocused = BrowserWindow.getFocusedWindow();
 // end screenshot
@@ -71,7 +70,6 @@ app.on('ready', async () => {
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     try {
-      console.log('app ready top...')
       await installExtension(VUEJS_DEVTOOLS)
     } catch (e) {
       console.error('Vue Devtools failed to install:', e.toString())

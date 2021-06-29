@@ -107,9 +107,7 @@ import axios from 'axios'
 var QRCode = require('qrcode')
 
 const path = window.require("path");
-console.log('path -> ' + path)
 const fs = window.require("fs");
-console.log('fs -> ' + fs)
 const { ipcRenderer, desktopCapturer } = require("electron");
 console.log('ipc -> ' + ipcRenderer + desktopCapturer)
 const nodemailer = require('nodemailer');
@@ -132,8 +130,6 @@ export default {
         // var tezos_qrcode_img = document.getElementsByClassName('tezos_qrcode_img')
         this.cryptos = response.data
         //console.log(response)         // This will give you access to the full object
-        console.log(response.data.XTZ.USD)
-        console.log(response.data.ALGO.USD)
         tezos_price.innerHTML = response.data.XTZ.USD
         burst_price.innerHTML = response.data.BURST.USD
         algo_price.innerHTML = response.data.ALGO.USD
@@ -153,11 +149,10 @@ export default {
       });
     },
     screenshot() {
-      console.log('screen shot clicked!')
       ipcRenderer.send('save-screen-shot')
     },
     submitemail() {
-      console.log(this.emailaddress)
+      // console.log(this.emailaddress)
       this.sendMail(this.emailaddress)
     },
     pollData() {
