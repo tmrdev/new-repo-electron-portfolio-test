@@ -5,9 +5,9 @@
 yarn install
 ```
 
-### Compiles and hot-reloads for development
+### Compiles and hot-reloads for development (only dev build mode for testing purposes)
 ```
-yarn serve
+yarn electron:serve
 ```
 
 ### Compiles and minifies for production
