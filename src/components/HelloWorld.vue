@@ -78,7 +78,7 @@
         <a href="https://timreynolds.org/" target="_blank" rel="noopener">profile</a> |
       </li>
       <li>
-        <a href="mailto:tim@electrixsheep.com" target="_blank" rel="noopener">tim@electrixsheep.com</a> |
+        <a href="mailto:tim@electrixsheep.com" rel="noopener">tim@electrixsheep.com</a> |
       </li>
       <li>
         <a href="https://timreynolds.org/resume/" target="_blank" rel="noopener">resume</a>
@@ -93,7 +93,7 @@
     </div>
 
     <div class="screenshot_footer" style="padding: 0 0 25px 0">
-        <h3>enter email address for emailing screenshot</h3>
+        <h3>Enter email address for emailing screenshot (Screenshot Should Be Saved In ~/Downloads as electron-screenshot.png)</h3>
         <input v-model="emailaddress" placeholder="enter email address here" />
         <button class="button_inner_shadow" type="button" name="button" v-on:click="submitemail">Submit And Email</button>
     </div>
@@ -105,9 +105,6 @@
 <script>
 import axios from 'axios'
 var QRCode = require('qrcode')
-
-const path = window.require("path");
-const fs = window.require("fs");
 const { ipcRenderer, desktopCapturer } = require("electron");
 console.log('ipc -> ' + ipcRenderer + desktopCapturer)
 const nodemailer = require('nodemailer');
@@ -162,7 +159,11 @@ export default {
        }, 7500)
     },
     sendMail(emailaddress) {
-      nodeSendMail(nodemailer, emailaddress)
+      if ( typeof emailaddress !== 'undefined' && emailaddress ) {
+        nodeSendMail(nodemailer, emailaddress)
+      } else {
+        ipcRenderer.send('screenshot-error')
+      }
     },
   },
   created () {
@@ -194,11 +195,12 @@ function nodeSendMail(nodemailer, emailaddress) {
     };
 
     transporter.sendMail(mailOptions, function(error, info){
-      if (error || mailOptions.to == null) {
+      if (error) {
         console.log(error);
         ipcRenderer.send('screenshot-error')
       } else {
         console.log('Email sent: ' + info.response);
+        ipcRenderer.send('email-sent')
       }
     });
 }
@@ -255,7 +257,7 @@ a {
     position: relative;
     width: 35px;
     top:35px;
-    opacity: 0.85;
+    opacity: 0.72;
     text-align: middle;
     display: block;
     margin: auto; 
@@ -274,7 +276,7 @@ a {
     position: relative;
     width: 35px;
     top:35px;
-    opacity: 0.85;
+    opacity: 0.72;
     text-align: middle;
     display: block;
     margin: auto; 
@@ -293,7 +295,7 @@ a {
     position: relative;
     width: 35px;
     top:35px;
-    opacity: .85;
+    opacity: .72;
     text-align: middle;
     display: block;
     margin: auto; 

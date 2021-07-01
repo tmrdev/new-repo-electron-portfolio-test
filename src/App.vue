@@ -23,16 +23,17 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #ffffff;
-  background-color:#2c3e50;
   margin-top: 10px;
 }
-
-/* @media (prefers-color-scheme: dark) {
+/* 
+ * Use media declarations below for macOS native dark and light themes 
+ */
+@media (prefers-color-scheme: dark) {
   body { background: #2c3e50; color: white; }
 }
 
 @media (prefers-color-scheme: light) {
   body { background: #ddd; color: black; }
-} */
+}
 
 </style>

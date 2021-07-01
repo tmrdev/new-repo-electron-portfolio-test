@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, screen, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -23,12 +23,14 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 async function createWindow() {
+  // getPrimaryDisplay has to execute after app ready
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: width,
+    height: height,
     webPreferences: {
-      devTools: true,
+      devTools: false,
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
@@ -137,10 +139,18 @@ ipcMain.on('save-screen-shot', (evt, arg) => {
           });
 })
 
-function showNotification () {
+function showEmailErrorNotification () {
   new Notification({ title: 'Email Error:', body: 'Check email address and make sure screenshot has been saved' }).show()
 }
 
+function showEmailSentNotification () {
+  new Notification({ title: 'Email Sent:', body: 'Screenshot and Email Have Been Sent.' }).show()
+}
+
 ipcMain.on('screenshot-error', (evt, arg) => {
-  app.whenReady().then(createWindow).then(showNotification)
+  app.whenReady().then(createWindow).then(showEmailErrorNotification)
+})
+
+ipcMain.on('email-sent', (evt, arg) => {
+  app.whenReady().then(createWindow).then(showEmailSentNotification)
 })
