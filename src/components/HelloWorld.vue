@@ -93,9 +93,11 @@
     </div>
 
     <div class="screenshot_footer" style="padding: 0 0 25px 0">
+      <form v-on:submit.prevent="onSubmit">
         <h3>Enter email address for emailing screenshot (Screenshot Should Be Saved In ~/Downloads as electron-screenshot.png)</h3>
         <input v-model="emailaddress" placeholder="enter email address here" />
-        <button class="button_inner_shadow" type="button" name="button" v-on:click="submitemail">Submit And Email</button>
+        <button class="button_inner_shadow" name="button" v-on:click.prevent="submitEmail">Submit And Email</button>
+      </form>
     </div>
 
   </div>
@@ -105,8 +107,8 @@
 <script>
 import axios from 'axios'
 var QRCode = require('qrcode')
-const { ipcRenderer, desktopCapturer } = require("electron");
-console.log('ipc -> ' + ipcRenderer + desktopCapturer)
+const { ipcRenderer } = require("electron");
+// console.log('ipc -> ' + ipcRenderer + desktopCapturer)
 const nodemailer = require('nodemailer');
 
 export default {
@@ -148,9 +150,13 @@ export default {
     screenshot() {
       ipcRenderer.send('save-screen-shot')
     },
-    submitemail() {
-      // console.log(this.emailaddress)
-      this.sendMail(this.emailaddress)
+    submitEmail: function(event) {
+      console.log(event)
+      if ( typeof this.emailaddress !== 'undefined' && this.emailaddress && validateEmail(this.emailaddress) ) {
+        this.sendMail(this.emailaddress)
+      } else {
+        alert('Please add a valid email address');
+      }
     },
     pollData() {
       this.loadData();
@@ -159,11 +165,8 @@ export default {
        }, 7500)
     },
     sendMail(emailaddress) {
-      if ( typeof emailaddress !== 'undefined' && emailaddress ) {
-        nodeSendMail(nodemailer, emailaddress)
-      } else {
-        ipcRenderer.send('screenshot-error')
-      }
+      // console.log('email address set, send email')
+      nodeSendMail(nodemailer, emailaddress)
     },
   },
   created () {
@@ -173,6 +176,15 @@ export default {
   beforeDestroy: function(){
     clearInterval(this.interval);
   },
+}
+
+function validateEmail(emailAddress) {
+ // console.log('validate email ' + emailAddress)
+ if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(emailAddress)) {
+    return (true)
+ }
+    // alert("You have entered an invalid email address!")
+    return (false)
 }
 
 function nodeSendMail(nodemailer, emailaddress) {
@@ -186,8 +198,8 @@ function nodeSendMail(nodemailer, emailaddress) {
     const mailOptions = {
       from: 't1mel3ctr0n@gmail.com',
       to: emailaddress,
-      subject: 'test2',
-      text: 'test2',
+      subject: 'Send Attachment',
+      text: 'Send Attachment Test',
       attachments: [{   // file on disk as an attachment
             filename: 'electron-screenshot.png',
             path: '/Users/sonicsir/Downloads/electron-screenshot.png' // stream this file
