@@ -14,7 +14,7 @@ const path = require("path");
 const fs = require("fs");
 const dialog = electron.dialog
 // let win = BrowserWindow.getAllWindows()[0];
-let windowFocused = BrowserWindow.getFocusedWindow();
+// let windowFocused = BrowserWindow.getFocusedWindow();
 // end screenshot
 
 // Scheme must be registered before the app is ready
@@ -30,7 +30,7 @@ async function createWindow() {
     width: width,
     height: height,
     webPreferences: {
-      devTools: false,
+      devTools: true,
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
@@ -96,14 +96,9 @@ if (isDevelopment) {
 }
 
 ipcMain.on('save-screen-shot', (evt, arg) => {
-  // app.quit()
+  // https://www.electronjs.org/docs/api/web-contents#webcontentsgetallwebcontents
   BrowserWindow.getFocusedWindow().webContents
-          .capturePage({
-              x: 0,
-              y: 0,
-              width: 800,
-              height: 600,
-          })
+          .capturePage()
           .then((img) => {
               dialog
                   .showSaveDialog({
